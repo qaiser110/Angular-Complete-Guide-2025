@@ -1,0 +1,25 @@
+<main>
+  <app-learning-resources />
+
+  <hr />
+
+  <app-auth />
+
+  <!-- @if (isAdmin()) {
+    <p>Only admins should see this!</p>
+  } @else if (isUser()) {
+    <p>Only users should see this!</p>
+    admin@example.com
+  } -->
+
+  <!-- <ng-template appAuth="admin">
+    <p>Only admins should see this!</p>
+  </ng-template> -->
+
+  <p *appAuth="'admin'" class="protected-content admin"> Admin Text! </p>
+  <p *appAuth="'user'" class="protected-content authenticated"> Regular User! </p>
+  <p *appAuth="'guest'" appLog class="protected-content unauthenticated"> Guest User! </p>
+
+  <!-- 
+  <p appAuth="guest">Only guest should see this!</p>  -->
+</main>

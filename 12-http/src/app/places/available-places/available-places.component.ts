@@ -16,19 +16,21 @@ import { map } from 'rxjs';
 export class AvailablePlacesComponent implements OnInit {
   places = signal<Place[] | undefined>(undefined);
   isFetching = signal(false);
+  error = signal('');
   private httpClient = inject(HttpClient);
 
   ngOnInit() {
     this.isFetching.set(true);
     this.httpClient
-      .get<{ places: Place[] }>('http://localhost:3000/places', {
-        observe: 'body',
-        responseType: 'json',
-      })
-      .pipe(map(({ places }) => places as Place[]))
+      .get<{ places: Place[] }>('http://localhost:3000/places')
+      .pipe(map(({ places }) => places))
       .subscribe({
         next: (places) => {
           this.places.set(places);
+        },
+        error: (err) => {
+          console.log(err);
+          this.error.set('Something went wrong fetching the places!');
         },
         complete: () => {
           this.isFetching.set(false);

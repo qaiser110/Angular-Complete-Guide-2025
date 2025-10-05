@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 
 import { Place } from '../place.model';
 import { PlacesComponent } from '../places.component';
@@ -18,10 +18,11 @@ export class AvailablePlacesComponent implements OnInit {
   isFetching = signal(false);
   error = signal('');
   private httpClient = inject(HttpClient);
+  private destroyRef = inject(DestroyRef);
 
   ngOnInit() {
     this.isFetching.set(true);
-    this.httpClient
+    const subscription = this.httpClient
       .get<{ places: Place[] }>('http://localhost:3000/places')
       .pipe(map(({ places }) => places))
       .subscribe({
@@ -36,6 +37,10 @@ export class AvailablePlacesComponent implements OnInit {
           this.isFetching.set(false);
         },
       });
+
+    this.destroyRef.onDestroy(() => {
+      subscription.unsubscribe();
+    });
   }
 
   onSelectPlace(place: Place) {
